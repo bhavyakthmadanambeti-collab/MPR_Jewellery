@@ -1,0 +1,30 @@
+# One-click backend on Render (render.com → New → Blueprint → select this repo).
+services:
+  - type: web
+    name: mpr-jewellery-api
+    runtime: node
+    plan: free
+    buildCommand: npm run install:all && npm --prefix server run build
+    startCommand: npm --prefix server start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL        # Supabase/PostgreSQL connection string (recommended — free disk is not permanent)
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SEED_OWNER_EMAIL
+        value: bhavyakthmadanambeti@gmail.com
+      - key: SEED_OWNER_PASSWORD # set once, remove after first successful start
+        sync: false
+      - key: UPI_ID
+        value: 9030957387@axl
+      - key: UPI_PHONE
+        value: "9030957387"
+      - key: CORS_ORIGINS        # e.g. https://<your-github-username>.github.io
+        sync: false
