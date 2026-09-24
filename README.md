@@ -131,6 +131,10 @@ npm test             # terminal 2 — owner login/invalid login, product CRUD, i
 - **With the backend (simplest):** `npm run build` and deploy the whole repo to a Node host (Render, Railway, Fly.io, a VPS). Express serves `client/dist` and `/api` on one domain.
 - **Separately (Vercel/Netlify):** build `client/` with `VITE_API_URL=https://api.yourdomain.com`. Configure SPA rewrites to `index.html`, or build with `VITE_ROUTER_MODE=hash`. Add your frontend origin to `CORS_ORIGINS` on the server.
 
+### GitHub Pages (catalogue-only mode)
+
+The included workflow `.github/workflows/deploy-pages.yml` builds `client/` and publishes it to GitHub Pages (Settings → Pages → Source: GitHub Actions). If the repository variable `VITE_API_URL` is **not** set, the site runs in read-only catalogue mode: products, collections, rates and settings load from `client/public/static-data/catalog.json`, while ordering, accounts and the Owner Portal show a message asking customers to call/WhatsApp. Refresh that data after changes with `npm --prefix server run export:static` (server running) and push. Once the backend is hosted, set `VITE_API_URL` and re-run the workflow for the full live store.
+
 ## 14. Deploying the backend
 
 Any Node 20 host: build command `npm run install:all && npm run build`, start command `npm start`, set `NODE_ENV=production`, `JWT_SECRET`, `DATABASE_URL`, Supabase storage variables, UPI variables. Use HTTPS. Uploads must use Supabase Storage in production (local disk is not persistent on most hosts).

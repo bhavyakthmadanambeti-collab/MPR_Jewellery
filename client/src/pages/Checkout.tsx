@@ -12,6 +12,7 @@ import { EmptyState, ErrorNote, Field, Input, Spinner, Textarea } from '@/compon
 import { Summary, useQuote } from './Cart';
 import { formatINR } from '@/utils/format';
 import { rememberOrder } from './OrderStatus';
+import { STATIC_MODE } from '@/services/staticApi';
 
 const STATES = ['Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal', 'Andaman and Nicobar Islands', 'Chandigarh', 'Dadra and Nagar Haveli and Daman and Diu', 'Delhi', 'Jammu and Kashmir', 'Ladakh', 'Lakshadweep', 'Puducherry'];
 
@@ -96,6 +97,12 @@ export default function Checkout() {
       <p className="eyebrow flex items-center gap-2"><Lock className="h-3.5 w-3.5" /> Secure checkout</p>
       <h1 className="mt-2 text-[36px] sm:text-[40px]">Checkout</h1>
 
+      {STATIC_MODE && (
+        <div className="mt-6 rounded-2xl border border-gold/30 bg-[#F8F0DF] px-5 py-4 text-[14.5px] text-cocoa-200" data-testid="note-static-mode">
+          <p className="font-medium">Online ordering is coming soon</p>
+          <p className="mt-0.5">To order this piece now, please call or WhatsApp <a className="font-semibold underline underline-offset-4" href={`tel:${settings?.contact.phone || '9030957387'}`}>{settings?.contact.phone || '9030957387'}</a>.</p>
+        </div>
+      )}
       <form onSubmit={submit} noValidate className="mt-8 grid gap-8 lg:grid-cols-[1fr_400px]">
         <div className="space-y-6">
           <section className="card p-5 sm:p-7">

@@ -34,6 +34,8 @@ jobs:
         env:
           VITE_ROUTER_MODE: hash            # works on GitHub Pages without server rewrites
           VITE_API_URL: ${{ vars.VITE_API_URL }}
+          # Without a backend URL, the site runs as a read-only catalogue from client/public/static-data
+          VITE_STATIC_DATA: ${{ vars.VITE_API_URL == '' && 'true' || 'false' }}
         run: npx vite build
       - uses: actions/upload-pages-artifact@v3
         with:

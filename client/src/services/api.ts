@@ -1,3 +1,4 @@
+import { STATIC_MODE, staticApi } from './staticApi';
 /**
  * API client. `__PORT_5000__` is rewritten by the preview host to the proxied backend
  * URL; in normal deployments set VITE_API_URL (or leave empty for same-origin /api).
@@ -32,6 +33,13 @@ function authHeader(path: string): Record<string, string> {
 const FRIENDLY_NETWORK = 'We could not reach the server. Please check your connection and try again.';
 
 export async function api<T = any>(path: string, opts: { method?: string; body?: unknown; signal?: AbortSignal } = {}): Promise<T> {
+  if (STATIC_MODE) {
+    try {
+      return (await staticApi(path, opts.method || (opts.body ? 'POST' : 'GET'), opts.body)) as T;
+    } catch (e: any) {
+      throw new ApiError(e?.status || 503, e?.message || FRIENDLY_NETWORK);
+    }
+  }
   let res: Response;
   try {
     res = await fetch(`${API_BASE}${path}`, {
@@ -60,6 +68,7 @@ export async function api<T = any>(path: string, opts: { method?: string; body?:
 
 /** Multipart upload with progress (XHR — fetch has no upload progress events). */
 export function upload<T = any>(path: string, form: FormData, onProgress?: (pct: number) => void, method = 'POST'): Promise<T> {
+  if (STATIC_MODE) return Promise.reject(new ApiError(503, 'Uploads need the MPR JEWELLERY server, which is not connected to this website yet.'));
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.open(method, `${API_BASE}${path}`);
