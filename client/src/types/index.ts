@@ -36,7 +36,7 @@ export interface Order {
   paymentMethod: string; paymentStatus: string; orderStatus: string; createdAt: string; updatedAt: string;
   items: OrderItem[]; payment: Payment | null; itemSummary?: string; itemCount?: number;
 }
-export interface PaymentInstructions { provider: string; upiId: string; payeeName: string; upiPhone: string; amount: number; currency: string; upiLink: string; qrSvg?: string; instructions: string; supportMessage: string }
+export interface PaymentInstructions { provider: string; upiId: string; payeeName: string; upiPhone: string; amount: number; currency: string; upiLink: string; upiAllowed?: boolean; upiMaxAmount?: number; qrSvg?: string; instructions: string; supportMessage: string }
 export interface OrderDetailResponse { order: Order; accessToken: string; paymentInstructions: PaymentInstructions | null; history: { event: string; to_status: string; actor_type: string; created_at: string }[]; message?: string }
 
 export interface Quote {

@@ -14,6 +14,9 @@ export interface PaymentInstructions {
   amount: number;
   currency: string;
   upiLink: string;
+  /** False when the amount is above the UPI limit — customer must use bank transfer instead. */
+  upiAllowed: boolean;
+  upiMaxAmount: number;
   qrSvg?: string;
   instructions: string;
   supportMessage: string;

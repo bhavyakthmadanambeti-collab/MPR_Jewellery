@@ -11,7 +11,7 @@ import { LogoMark } from '@/components/Logo';
 interface OwnerSettings {
   brand: { name: string; tagline: string; logoUrl: string | null };
   contact: { phone: string; email: string; address: string; whatsapp: string; hours: string };
-  payment: { upiId: string; upiDisplayName: string; upiPhone: string; instructions: string; supportMessage: string };
+  payment: { upiId: string; upiDisplayName: string; upiPhone: string; merchantCode?: string; upiMaxAmount?: number; instructions: string; supportMessage: string };
   commerce: { currency: string; delivery: { flatCharge: number; freeAbove: number }; tax: { mode: 'none' | 'inclusive' | 'exclusive'; ratePercent: number; label: string } };
   home: { heroCollectionId: number | null; heroEyebrow: string; heroSubtitle: string; sections: HomeSection[] };
 }
@@ -103,6 +103,8 @@ export default function Settings() {
             <Field label="UPI ID"><Input value={s.payment.upiId} onChange={(e) => up('payment', { upiId: e.target.value })} data-testid="input-upi-id" /></Field>
             <Field label="UPI display name"><Input value={s.payment.upiDisplayName} onChange={(e) => up('payment', { upiDisplayName: e.target.value })} /></Field>
             <Field label="UPI phone number"><Input value={s.payment.upiPhone} onChange={(e) => up('payment', { upiPhone: e.target.value })} inputMode="numeric" maxLength={10} /></Field>
+            <Field label="Merchant code (MCC) — only for a merchant UPI ID"><Input value={s.payment.merchantCode ?? ''} onChange={(e) => up('payment', { merchantCode: e.target.value.replace(/\D/g, '').slice(0, 4) })} inputMode="numeric" maxLength={4} placeholder="Leave empty for personal UPI ID · Jewellery: 5944" /></Field>
+            <Field label="Maximum UPI amount (₹)"><Input value={String(s.payment.upiMaxAmount ?? 100000)} onChange={(e) => up('payment', { upiMaxAmount: Number(e.target.value.replace(/\D/g, '')) || 0 })} inputMode="numeric" placeholder="100000 for a personal UPI ID" /></Field>
             <Field label="Payment instructions" className="sm:col-span-2"><Textarea value={s.payment.instructions} onChange={(e) => up('payment', { instructions: e.target.value })} className="min-h-[80px]" /></Field>
             <Field label="Payment support message" className="sm:col-span-2"><Textarea value={s.payment.supportMessage} onChange={(e) => up('payment', { supportMessage: e.target.value })} className="min-h-[70px]" /></Field>
           </div>

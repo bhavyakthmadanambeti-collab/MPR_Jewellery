@@ -10,6 +10,10 @@ export interface SiteSettings {
     upiId: string;
     upiDisplayName: string;
     upiPhone: string;
+    /** Merchant Category Code. Leave empty for a personal UPI ID; jewellery merchants use 5944. */
+    merchantCode: string;
+    /** Highest amount (₹) accepted by UPI for this UPI ID. ₹1,00,000 for personal IDs. */
+    upiMaxAmount: number;
     instructions: string;
     supportMessage: string;
   };
@@ -39,6 +43,8 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     upiId: env.upiId,
     upiDisplayName: 'MPR JEWELLERY',
     upiPhone: env.upiPhone,
+    merchantCode: '',
+    upiMaxAmount: 100000,
     instructions:
       'Pay the exact order amount to the UPI ID above using any UPI app. After paying, tap "I have made the payment". Keep your UPI transaction reference (UTR) for your records.',
     supportMessage: 'Need help with payment? Call or WhatsApp us and quote your Order ID.',

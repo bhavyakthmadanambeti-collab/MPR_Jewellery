@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en-IN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>MPR JEWELLERY</title>
+    <script>
+      // GitHub Pages has no server rewrites. Turn /MPR_Jewellery/order/X?t=Y into /MPR_Jewellery/#/order/X?t=Y
+      (function () {
+        var l = window.location;
+        var parts = l.pathname.split('/');
+        var base = parts.slice(0, 2).join('/') + '/'; // "/MPR_Jewellery/"
+        var route = '/' + parts.slice(2).join('/');
+        l.replace(l.origin + base + '#' + route + l.search + l.hash.replace(/^#/, ''));
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>

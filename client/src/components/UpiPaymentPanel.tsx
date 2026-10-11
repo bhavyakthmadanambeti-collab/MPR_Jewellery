@@ -23,7 +23,27 @@ function copyText(t: string) {
   return Promise.resolve();
 }
 
-const APPS = ['Google Pay', 'PhonePe', 'Paytm', 'BHIM', 'Other UPI apps'];
+const UA = typeof navigator !== 'undefined' ? navigator.userAgent : '';
+const IS_IOS = /iPad|iPhone|iPod/.test(UA) || (/Macintosh/.test(UA) && typeof document !== 'undefined' && 'ontouchend' in document);
+const IS_ANDROID = /Android/i.test(UA);
+const IS_MOBILE = IS_IOS || IS_ANDROID;
+/** WhatsApp / Instagram / Facebook in-app browsers often block upi:// links. */
+const IN_APP_BROWSER = /FBAN|FBAV|Instagram|WhatsApp|Line\/|; wv\)/i.test(UA);
+
+const UPI_APPS = [
+  { name: 'Google Pay', ios: 'gpay://upi/pay', pkg: 'com.google.android.apps.nbu.paisa.user' },
+  { name: 'PhonePe', ios: 'phonepe://pay', pkg: 'com.phonepe.app' },
+  { name: 'Paytm', ios: 'paytmmp://pay', pkg: 'net.one97.paytm' },
+  { name: 'BHIM', ios: 'bhim://upi/pay', pkg: 'in.org.npci.upiapp' },
+];
+
+/** Per-app deep link: iOS custom scheme, Android intent:// (works inside more browsers), else generic upi://. */
+function appHref(upiLink: string, app: (typeof UPI_APPS)[number]) {
+  const q = upiLink.split('?')[1] || '';
+  if (IS_IOS) return `${app.ios}?${q}`;
+  if (IS_ANDROID) return `intent://pay?${q}#Intent;scheme=upi;package=${app.pkg};S.browser_fallback_url=${encodeURIComponent(window.location.href)};end`;
+  return upiLink;
+}
 
 export function UpiPaymentPanel({ order, pay, onConfirm, confirming }: { order: Order; pay: PaymentInstructions; onConfirm: (reference: string) => void; confirming: boolean }) {
   const [copied, setCopied] = useState<string | null>(null);
@@ -61,20 +81,37 @@ export function UpiPaymentPanel({ order, pay, onConfirm, confirming }: { order: 
             <p><span className="text-cocoa-50">Amount: </span><span className="font-medium">{formatINR(pay.amount, true)}</span></p>
           </div>
 
-          <a href={pay.upiLink} className="btn-gold w-full py-3.5 text-[15px] font-semibold tracking-wide" data-testid="button-pay-upi">
-            <Smartphone className="h-[18px] w-[18px]" /> PAY USING UPI
-          </a>
-          <div>
-            <p className="text-[13px] text-cocoa-100">Pay using any supported UPI app</p>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {APPS.map((a) => <span key={a} className="rounded-full bg-beige/70 px-3 py-1 text-[12.5px] text-cocoa-200">{a}</span>)}
+          {pay.upiAllowed === false ? (
+            <div className="rounded-xl border border-warning/30 bg-[#FBF4E4] px-4 py-3.5 text-[14px] text-cocoa-200" data-testid="note-upi-limit">
+              <p className="font-medium text-cocoa">This amount is above the UPI limit of {formatINR(pay.upiMaxAmount ?? 100000)}.</p>
+              <p className="mt-1">UPI apps will decline this payment. Please call or WhatsApp us with your Order ID to pay by bank transfer (NEFT / RTGS / IMPS), or pay part as an advance by UPI and the balance in store.</p>
             </div>
-          </div>
+          ) : (
+            <>
+              <a href={pay.upiLink} className="btn-gold w-full py-3.5 text-[15px] font-semibold tracking-wide" data-testid="button-pay-upi">
+                <Smartphone className="h-[18px] w-[18px]" /> PAY USING ANY UPI APP
+              </a>
+              {IS_MOBILE && (
+                <div>
+                  <p className="text-[13px] text-cocoa-100">Or open a specific app</p>
+                  <div className="mt-2 grid grid-cols-2 gap-2">
+                    {UPI_APPS.map((a) => (
+                      <a key={a.name} href={appHref(pay.upiLink, a)} className="btn-outline btn-sm justify-center py-2.5" data-testid={`button-pay-${a.name.toLowerCase().replace(/\s/g, '')}`}>{a.name}</a>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {IN_APP_BROWSER && (
+                <p className="rounded-lg bg-beige/70 px-3 py-2 text-[12.5px] text-cocoa-200">If the buttons don't open your UPI app, tap ⋮ and choose "Open in Chrome" / "Open in Safari", or copy the UPI ID above and pay from your app.</p>
+              )}
+              {!IS_MOBILE && <p className="text-[13px] text-cocoa-100">On a computer, scan the QR code with your phone's UPI app.</p>}
+            </>
+          )}
           <p className="text-[13px] leading-relaxed text-cocoa-50">{pay.instructions}</p>
         </div>
 
         {pay.qrSvg && (
-          <div className="hidden flex-col items-center gap-2 md:flex">
+          <div className="flex flex-col items-center gap-2">
             <div className="w-[200px] rounded-xl bg-pearl p-3 ring-1 ring-cocoa/10" dangerouslySetInnerHTML={{ __html: pay.qrSvg }} aria-label="UPI QR code" data-testid="img-upi-qr" />
             <p className="flex items-center gap-1.5 text-[12px] text-cocoa-50"><QrCode className="h-3.5 w-3.5" /> Scan with any UPI app</p>
           </div>

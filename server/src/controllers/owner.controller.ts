@@ -202,6 +202,8 @@ const settingsSchema = z.object({
       upiId: z.string().trim().regex(/^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/, 'Enter a valid UPI ID (e.g. name@bank)'),
       upiDisplayName: z.string().trim().min(2).max(60),
       upiPhone: z.string().trim().regex(/^[6-9]\d{9}$/, 'Enter a valid 10-digit UPI phone number'),
+      merchantCode: z.string().trim().regex(/^(\d{4})?$/, 'Merchant code must be 4 digits (e.g. 5944) or empty'),
+      upiMaxAmount: z.coerce.number().min(1).max(1000000),
       instructions: z.string().trim().max(800),
       supportMessage: z.string().trim().max(400),
     })
