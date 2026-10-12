@@ -30,12 +30,15 @@ export class ErrorBoundary extends Component<Props, State> {
             We could not display this page. Please try again.
           </p>
 
-          <button
-            className="btn-primary mt-6"
-            onClick={() => window.location.reload()}
-          >
-            Reload page
-          </button>
+    <button
+  className="btn-primary mt-6"
+  onClick={() => {
+    window.location.hash = '/';
+    window.location.reload();
+  }}
+>
+  Go to Home
+</button>
         </div>
       );
     }
