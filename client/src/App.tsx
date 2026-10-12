@@ -48,7 +48,7 @@ export default function App() {
           <CartProvider>
             <Router>
               <ScrollTop />
-              <ErrorBoundary key={window.location.hash}>
+              <ErrorBoundary>
               <Suspense fallback={<PageLoader />}>
                 <Routes>
                   <Route element={<CustomerLayout />}>
