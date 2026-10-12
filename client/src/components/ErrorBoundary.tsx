@@ -1,48 +1,51 @@
 import { Component, type ReactNode } from 'react';
 
 interface Props {
-  children: ReactNode;
+children: ReactNode;
 }
 
 interface State {
-  error: Error | null;
+error: Error | null;
 }
 
 export class ErrorBoundary extends Component<Props, State> {
-  state: State = { error: null };
+state: State = { error: null };
 
-  static getDerivedStateFromError(error: Error): State {
-    return { error };
-  }
+static getDerivedStateFromError(error: Error): State {
+return { error };
+}
 
-  componentDidCatch(error: Error, info: React.ErrorInfo) {
-    console.error('MPR Jewellery UI error:', error);
-    console.error('Component stack:', info.componentStack);
-  }
+componentDidCatch(error: Error, info: React.ErrorInfo) {
+console.error('MPR Jewellery UI error:', error);
+console.error('Component stack:', info.componentStack);
+}
 
-  render() {
-    if (this.state.error) {
-      return (
-        <div className="flex min-h-[60vh] flex-col items-center justify-center px-6 text-center">
-          <h1 className="text-[30px]">Something went wrong</h1>
+goHome = () => {
+this.setState({ error: null });
+window.location.hash = '/';
+};
 
-          <p className="mt-2 text-cocoa-100">
-            We could not display this page. Please try again.
-          </p>
+render() {
+if (this.state.error) {
+return ( <div className="flex min-h-[60vh] flex-col items-center justify-center px-6 text-center"> <h1 className="text-[30px]">Page error</h1>
 
-    <button
-  className="btn-primary mt-6"
-  onClick={() => {
-    window.location.hash = '/';
-    window.location.reload();
-  }}
->
-  Go to Home
-</button>
-        </div>
-      );
-    }
+```
+      <p className="mt-2 text-cocoa-100">
+        You can return to the Home page.
+      </p>
 
-    return this.props.children;
-  }
+      <button
+        className="btn-primary mt-6"
+        onClick={this.goHome}
+      >
+        Go to Home
+      </button>
+    </div>
+  );
+}
+
+return this.props.children;
+```
+
+}
 }
