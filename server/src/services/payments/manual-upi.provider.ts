@@ -1,4 +1,4 @@
-```ts
+
 import QRCode from 'qrcode';
 import { getSettings } from '../settings.service.js';
 import type { PaymentProvider } from './provider.js';
